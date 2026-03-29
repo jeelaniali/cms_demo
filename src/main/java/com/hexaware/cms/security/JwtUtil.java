@@ -1,49 +1,65 @@
 package com.hexaware.cms.security;
 
-import java.security.Key;
-import java.util.Date;
-
-import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "hexawarecmsjwtsecretkeyhexawarecmsjwtsecretkey";
+    // Secret key — keep this private, don't share it!
+    private final String SECRET = "myCmsSecretKey12345678901234567890AbCdEfGhIjKlMnOpQrStUvWxYz";
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    // Token is valid for 1 hour (in milliseconds)
+    private final long EXPIRY = 1000 * 60 * 60;
 
-    public String generateToken(String email) {
+    // Converts secret string to a Key object
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
 
+    // Creates a JWT token with username and role inside
+    public String generateToken(String username, String role) {
         return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
-                .signWith(key)
+                .setSubject(username)                          // username goes here
+                .claim("role", role)                           // role goes as custom claim
+                .setIssuedAt(new Date())                       // token created now
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRY)) // expires in 1 hour
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // sign with our secret
                 .compact();
     }
 
-    public String extractEmail(String token) {
-        return getClaims(token).getSubject();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            getClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private Claims getClaims(String token) {
+    // Reads all claims (data) from the token
+    private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    // Gets the username from the token
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    // Gets the role from the token
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    // Checks if the token is expired
+    public boolean isTokenExpired(String token) {
+        return extractAllClaims(token).getExpiration().before(new Date());
+    }
+
+    // Returns true if token is valid (username matches + not expired)
+    public boolean validateToken(String token, String username) {
+        return extractUsername(token).equals(username) && !isTokenExpired(token);
     }
 }

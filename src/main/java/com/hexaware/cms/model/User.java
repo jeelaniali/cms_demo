@@ -8,89 +8,47 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;           // ← matches DB column: id
 
-    private String name;
+    private String name;       // ← matches DB column: name
 
-    private String email;
+    private String email;      // ← matches DB column: email
 
-    private String password;
+    private String password;   // ← matches DB column: password
 
-    private String phone;
+    private String phone;      // ← matches DB column: phone
 
-    private String aadhaar;
+    private String aadhaar;    // ← matches DB column: aadhaar
 
-    private String pan;
-    
+    private String pan;        // ← matches DB column: pan
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role;         // ← matches DB column: role
 
-	public Long getId() {
-		return id;
-	}
+    // ===== Getters and Setters =====
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getAadhaar() { return aadhaar; }
+    public void setAadhaar(String aadhaar) { this.aadhaar = aadhaar; }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getPan() { return pan; }
+    public void setPan(String pan) { this.pan = pan; }
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getAadhaar() {
-		return aadhaar;
-	}
-
-	public void setAadhaar(String aadhaar) {
-		this.aadhaar = aadhaar;
-	}
-
-	public String getPan() {
-		return pan;
-	}
-
-	public void setPan(String pan) {
-		this.pan = pan;
-	}
-
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
-    
-	
-    
-
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 }

@@ -14,4 +14,6 @@ public interface EvidenceService {
     EvidenceDTO updateEvidence(Long id, EvidenceDTO evidenceDTO);
 
     void deleteEvidence(Long id);
+
+    List<EvidenceDTO> getEvidenceByIncident(Long incidentId);
 }

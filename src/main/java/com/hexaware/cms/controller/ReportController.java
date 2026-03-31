@@ -6,6 +6,7 @@ import com.hexaware.cms.service.ReportService;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,9 +39,21 @@ public class ReportController {
         return reportService.updateReport(id, reportDTO);
     }
 
+    @PreAuthorize("hasRole('STATION_HEAD')")
     @DeleteMapping("/{id}")
     public String deleteReport(@PathVariable Long id) {
         reportService.deleteReport(id);
         return "Report deleted successfully";
+    }
+
+    @GetMapping("/incident/{incidentId}")
+    public List<ReportDTO> getReportByIncident(@PathVariable Long incidentId) {
+        return reportService.getReportByIncident(incidentId);
+    }
+    
+    @PreAuthorize("hasRole('STATION_HEAD')")
+    @PostMapping("/admin/report/{incidentId}")
+    public ReportDTO generateReport(@PathVariable Long incidentId) {
+        return reportService.generateReport(incidentId);
     }
 }

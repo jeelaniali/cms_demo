@@ -14,6 +14,18 @@ public interface IncidentService {
     IncidentDTO updateIncident(Long id, IncidentDTO incidentDTO);
 
     void deleteIncident(Long id);
-    
+
     IncidentDTO assignOfficer(Long incidentId, Long officerId);
+
+    List<IncidentDTO> getMyIncidents();
+
+    List<IncidentDTO> getIncidentsByUser(String email);
+
+    List<IncidentDTO> getIncidentsByOfficer(Long officerId);
+
+    IncidentDTO closeIncident(Long id);
+
+    IncidentDTO verifyIncident(Long id);
+
+    byte[] generateIncidentPdf(Long id);
 }

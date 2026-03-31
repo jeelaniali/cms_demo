@@ -96,4 +96,12 @@ public class EvidenceServiceImpl implements EvidenceService {
 
         evidenceRepository.delete(evidence);
     }
+
+    @Override
+    public List<EvidenceDTO> getEvidenceByIncident(Long incidentId) {
+        return evidenceRepository.findByIncidentId(incidentId)
+                .stream()
+                .map(evidence -> modelMapper.map(evidence, EvidenceDTO.class))
+                .collect(Collectors.toList());
+    }
 }

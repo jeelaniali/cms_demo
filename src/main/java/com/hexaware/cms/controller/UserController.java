@@ -10,6 +10,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.ResponseEntity;
+import com.hexaware.cms.dto.UpdateProfileRequest;
 
 @RestController
 @RequestMapping("/users")
@@ -48,11 +51,19 @@ public class UserController {
         return userService.updateUser(id, userDTO);
     }
 
-    // Only STATION_HEAD can delete users/officers
     @PreAuthorize("hasRole('STATION_HEAD')")
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return "User deleted successfully";
+    }
+
+    // All roles can update their own profile
+    @PreAuthorize("hasAnyRole('USER','OFFICER','STATION_HEAD')")
+    @PutMapping("/profile")
+    public ResponseEntity<UserDTO> updateProfile(@Valid @RequestBody UpdateProfileRequest request) {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserDTO updatedUser = userService.updateProfile(currentUserEmail, request);
+        return ResponseEntity.ok(updatedUser);
     }
 }

@@ -22,6 +22,17 @@ public class Incident {
     @Enumerated(EnumType.STRING)
     private IncidentStatus status;
     
+    @ManyToOne
+    @JoinColumn(name = "reported_by_id")
+    private User reportedBy;
+
+    public User getReportedBy() {
+        return reportedBy;
+    }
+
+    public void setReportedBy(User reportedBy) {
+        this.reportedBy = reportedBy;
+    }
     
     public IncidentStatus getStatus() {
 		return status;

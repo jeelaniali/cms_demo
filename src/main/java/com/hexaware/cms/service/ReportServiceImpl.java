@@ -35,6 +35,11 @@ public class ReportServiceImpl implements ReportService {
                 .orElseThrow(() ->
                         new IncidentNotFoundException("Incident not found with id: " + dto.getIncidentId()));
 
+        if (incident.getStatus() != com.hexaware.cms.model.IncidentStatus.CLOSED && 
+            incident.getStatus() != com.hexaware.cms.model.IncidentStatus.VERIFIED) {
+            throw new RuntimeException("Report can only be created for CLOSED or VERIFIED incidents.");
+        }
+
         Report report = modelMapper.map(dto, Report.class);
 
         report.setGeneratedDate(LocalDateTime.now());
@@ -86,5 +91,32 @@ public class ReportServiceImpl implements ReportService {
                         new ReportNotFoundException("Report not found with id: " + id));
 
         reportRepository.delete(report);
+    }
+
+    @Override
+    public List<ReportDTO> getReportByIncident(Long incidentId) {
+        return reportRepository.findByIncidentId(incidentId)
+                .stream()
+                .map(report -> modelMapper.map(report, ReportDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ReportDTO generateReport(Long incidentId) {
+        Incident incident = incidentRepository.findById(incidentId)
+                .orElseThrow(() -> new IncidentNotFoundException("Incident not found with id: " + incidentId));
+
+        if (incident.getStatus() != com.hexaware.cms.model.IncidentStatus.CLOSED && 
+            incident.getStatus() != com.hexaware.cms.model.IncidentStatus.VERIFIED) {
+            throw new RuntimeException("Report can only be generated for CLOSED or VERIFIED incidents.");
+        }
+
+        Report report = new Report();
+        report.setGeneratedDate(LocalDateTime.now());
+        report.setIncident(incident);
+        report.setReportDetails("System Generated Report for Incident ID: " + incidentId);
+
+        Report saved = reportRepository.save(report);
+        return modelMapper.map(saved, ReportDTO.class);
     }
 }

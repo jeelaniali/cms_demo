@@ -28,12 +28,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO createUser(UserDTO dto) {
+        
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email is already registered");
+        }
 
     	User user = modelMapper.map(dto, User.class);
     	
     	user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-    	user.setRole(Role.valueOf(dto.getRole()));
+        if (dto.getRole() != null && dto.getRole().trim().equalsIgnoreCase("OFFICER")) {
+            user.setRole(Role.OFFICER);
+        } else {
+            user.setRole(Role.USER);
+        }
 
     	User savedUser = userRepository.save(user);
 
@@ -96,5 +104,27 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
         userRepository.delete(user);
+    }
+
+    @Override
+    public UserDTO updateProfile(String email, com.hexaware.cms.dto.UpdateProfileRequest request) {
+        User loggedInUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Logged in user not found"));
+
+        if (request.getName() != null) {
+            loggedInUser.setName(request.getName());
+        }
+        if (request.getPhone() != null) {
+            loggedInUser.setPhone(request.getPhone());
+        }
+        if (request.getAadhaar() != null) {
+            loggedInUser.setAadhaar(request.getAadhaar());
+        }
+        if (request.getPan() != null) {
+            loggedInUser.setPan(request.getPan());
+        }
+
+        User updated = userRepository.save(loggedInUser);
+        return modelMapper.map(updated, UserDTO.class);
     }
 }

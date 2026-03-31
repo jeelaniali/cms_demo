@@ -14,4 +14,8 @@ public interface ReportService {
     ReportDTO updateReport(Long id, ReportDTO reportDTO);
 
     void deleteReport(Long id);
+
+    List<ReportDTO> getReportByIncident(Long incidentId);
+    
+    ReportDTO generateReport(Long incidentId);
 }

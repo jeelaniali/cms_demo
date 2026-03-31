@@ -24,6 +24,12 @@ public class IncidentDTO {
     
     
     private IncidentStatus status;
+    
+    private Long reportedById;
+    
+    private Long officerId;
+    
+    private String officerName;
 
     public IncidentStatus getStatus() {
 		return status;
@@ -32,6 +38,30 @@ public class IncidentDTO {
 	public void setStatus(IncidentStatus status) {
 		this.status = status;
 	}
+	
+    public Long getReportedById() {
+        return reportedById;
+    }
+
+    public void setReportedById(Long reportedById) {
+        this.reportedById = reportedById;
+    }
+
+    public Long getOfficerId() {
+        return officerId;
+    }
+
+    public void setOfficerId(Long officerId) {
+        this.officerId = officerId;
+    }
+
+    public String getOfficerName() {
+        return officerName;
+    }
+
+    public void setOfficerName(String officerName) {
+        this.officerName = officerName;
+    }
 
 	public Long getId() {
         return id;
